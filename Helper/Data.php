@@ -9,6 +9,7 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
+use MasterZydra\UCache\Helper\UCache;
 use Psr\Log\LoggerInterface;
 use WikaGroup\WikaUserDataApi\Model\AzureProvider;
 
@@ -22,6 +23,7 @@ class Data extends AbstractHelper
         private LoggerInterface $logger,
         private DirectoryList $directoryList,
         private File $fileDriver,
+        private UCache $ucache,
     ) {
         parent::__construct($context);
     }
@@ -61,7 +63,7 @@ class Data extends AbstractHelper
 
     private function getToken(): ?string
     {
-        $token = $this->loadTokenFromFile();
+        $token = $this->ucache->load('magento2WikaUserDataApi_token');
         if ($token !== null) {
             $expires = $token['expires'];
             if ($expires - self::EXPIRATION_OFFSET > time()) {
@@ -73,47 +75,12 @@ class Data extends AbstractHelper
             $provider = new AzureProvider($this->scopeConfig, $this->settings);
             $token = $provider->getAccessToken('client_credentials');
 
-            $this->writeTokenToFile(['token' => $token->getToken(), 'expires' => $token->getExpires()]);
+            $this->ucache->save('magento2WikaUserDataApi_token', ['token' => $token->getToken(), 'expires' => $token->getExpires()]);
 
             return $token->getToken();
         } catch (\Throwable $th) {
             $this->logger->error('WikaGroup WikaUserDataApi: Failed to get token', ['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
             return null;
-        }
-    }
-
-    private function loadTokenFromFile(): ?array
-    {
-        try {
-            $path = $this->directoryList->getPath(DirectoryList::VAR_DIR) . '/wika/userDataApi.txt';
-            $content = $this->fileDriver->fileGetContents($path);
-        } catch (\Throwable $th) {
-            $this->logger->error('WikaGroup WikaUserDataApi: Failed to load token file', ['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
-            return null;
-        }
-
-        if (empty($content)) {
-            return null;
-        }
-
-        try {
-            return json_decode($content, true);
-        } catch (\Throwable $th) {
-            $this->logger->error('WikaGroup WikaUserDataApi: Failed to parse token file', ['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
-            return null;
-        }
-    }
-
-    private function writeTokenToFile(array $token): void
-    {
-        try {
-            $path = $this->directoryList->getPath(DirectoryList::VAR_DIR) . '/wika';
-            if (!$this->fileDriver->isExists($path)) {
-                $this->fileDriver->createDirectory($path);
-            }
-            $this->fileDriver->filePutContents($path . '/userDataApi.txt', json_encode($token));
-        } catch (\Throwable $th) {
-            $this->logger->error('WikaGroup WikaUserDataApi: Failed to write token file', ['message' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
         }
     }
 }
