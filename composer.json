@@ -1,0 +1,29 @@
+{
+    "name": "wika-group/magento2-wika-user-data-api",
+    "description": "Module to encapsulate the access to the WIKA user data azure API",
+    "keywords": ["Azure", "Magento2"],
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "WIKA Group",
+            "email": "webapps-admin@wika.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "version": "1.0.0",
+    "require": {
+        "php": "^8.1",
+        "firebase/php-jwt": "^6.10",
+        "league/oauth2-client": "^2.7",
+        "magento/framework": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "WikaGroup\\WikaUserDataApi\\": ""
+        }
+    }
+}

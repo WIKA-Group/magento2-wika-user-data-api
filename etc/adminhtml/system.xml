@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="wika_group" sortOrder="300">
+            <label>WIKA Group</label>
+        </tab>
+
+        <section id="wika_user_data_api" sortOrder="0"  showInDefault="1" showInWebsite="0" showInStore="1">
+            <tab>wika_group</tab>
+            <label>WIKA User Data API</label>
+            <resource>WikaGroup_AzureB2cSSO::config_wika_user_data_api</resource>
+
+            <group id="connection" sortOrder="0" showInDefault="1" showInWebsite="0" showInStore="1">
+                <label>Connection</label>
+
+                <field id="tenant_id" type="text" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>Tenant ID</label>
+                </field>
+
+                <field id="client_id" type="text" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>Client ID</label>
+                </field>
+
+                <field id="client_secret" type="text" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>Client secret</label>
+                </field>
+
+                <field id="resource" type="text" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>Resource</label>
+                    <comment><![CDATA[e.g. https://&lt;domain-name&gt;.onmicrosoft.com/&lt;application-id&gt;/.default]]></comment>
+                </field>
+
+                <field id="api_base_url" type="text" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>API base url</label>
+                    <comment><![CDATA[e.g. https://&lt;domain-name&gt;/api]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
