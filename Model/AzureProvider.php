@@ -2,18 +2,13 @@
 
 namespace WikaGroup\WikaUserDataApi\Model;
 
-use League\OAuth2\Client\Provider\GenericProvider;
-use League\OAuth2\Client\Token\AccessTokenInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use WikaGroup\WikaUserDataApi\Helper\Settings;
-
-class AzureProvider extends GenericProvider
+class AzureProvider extends \League\OAuth2\Client\Provider\GenericProvider
 {
     private string $resource;
 
     public function __construct(
-        protected ScopeConfigInterface $scopeConfig,
-        protected Settings $settings,
+        protected \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        protected \WikaGroup\WikaUserDataApi\Helper\Settings $settings,
     ) {
         $this->resource = $this->settings->getResource();
 
@@ -28,7 +23,7 @@ class AzureProvider extends GenericProvider
         ]);
     }
 
-    public function getAccessToken($grant, array $options = []): AccessTokenInterface
+    public function getAccessToken($grant, array $options = []): \League\OAuth2\Client\Token\AccessTokenInterface
     {
         return parent::getAccessToken($grant, array_merge(['scope' => $this->resource], $options));
     }

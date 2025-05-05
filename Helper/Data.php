@@ -4,26 +4,18 @@ declare(strict_types=1);
 
 namespace WikaGroup\WikaUserDataApi\Helper;
 
-use Laminas\Http\Client;
-use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Framework\App\Helper\Context;
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Filesystem\Driver\File;
-use MasterZydra\UCache\Helper\UCache;
-use Psr\Log\LoggerInterface;
-use WikaGroup\WikaUserDataApi\Model\AzureProvider;
-
-class Data extends AbstractHelper
+class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     private const EXPIRATION_OFFSET = 10;
 
     public function __construct(
-        Context $context,
+        \Magento\Framework\App\Helper\Context $context,
         private Settings $settings,
-        private LoggerInterface $logger,
-        private DirectoryList $directoryList,
-        private File $fileDriver,
-        private UCache $ucache,
+        private \Psr\Log\LoggerInterface $logger,
+        private \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
+        private \Magento\Framework\Filesystem\Driver\File $fileDriver,
+        private \MasterZydra\UCache\Helper\UCache $ucache,
+        private \Magento\Framework\Escaper $escaper,
     ) {
         parent::__construct($context);
     }
@@ -36,8 +28,8 @@ class Data extends AbstractHelper
         }
 
         try {
-            $client = new Client();
-            $client->setUri($this->settings->getApiBaseUrl() . '/users/' . _u($email));
+            $client = new \Laminas\Http\Client();
+            $client->setUri($this->settings->getApiBaseUrl() . '/users/' . $this->escaper->escapeUrl($email)); 
             $client->setMethod('GET');
             $client->setHeaders(['Authorization' => 'Bearer ' . $token]);
             $response = $client->send();
@@ -72,7 +64,7 @@ class Data extends AbstractHelper
         }
 
         try {
-            $provider = new AzureProvider($this->scopeConfig, $this->settings);
+            $provider = new \WikaGroup\WikaUserDataApi\Model\AzureProvider($this->scopeConfig, $this->settings);
             $token = $provider->getAccessToken('client_credentials');
 
             $this->ucache->save('magento2WikaUserDataApi_token', ['token' => $token->getToken(), 'expires' => $token->getExpires()]);

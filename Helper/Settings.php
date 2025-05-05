@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace WikaGroup\WikaUserDataApi\Helper;
 
-use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Store\Model\ScopeInterface;
 
-class Settings extends AbstractHelper
+class Settings extends \Magento\Framework\App\Helper\AbstractHelper
 {
     public function getTenantId(): string
     {
