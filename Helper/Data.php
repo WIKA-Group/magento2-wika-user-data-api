@@ -34,8 +34,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $client->setHeaders(['Authorization' => 'Bearer ' . $token]);
             $response = $client->send();
 
+            // User found
             if ($response->getStatusCode() === 200) {
                 return json_decode((string)$response->getBody(), true);
+            }
+
+            // User not found
+            if ($response->getStatusCode() === 404) {
+                return null;
             }
 
             if ($retry401 && $response->getStatusCode() === 401) {
